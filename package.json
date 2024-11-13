@@ -1,0 +1,19 @@
+{
+  "name": "dashing-doves-instock-api",
+  "version": "1.0.0",
+  "description": "BrainStation Instock project API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "dashing-doves-instock-api"
+  },
+  "keywords": [
+    "project",
+    "API"
+  ],
+  "author": "Adam, Tetiana, Ari, Renu, Sofia",
+  "license": "ISC"
+}
