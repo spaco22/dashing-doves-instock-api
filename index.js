@@ -1,10 +1,8 @@
 import express from "express";
 import warehouseRoute from "./routes/warehouses.js";
 import inventoryRoute from "./routes/inventory.js";
-import initKnex from "knex";
-import configuration from "./knexfile.js";
 import cors from "cors";
-const knex = initKnex(configuration);
+
 
 const app = express();
 const { BACKEND_URL, CORS_ORIGIN } = process.env;
