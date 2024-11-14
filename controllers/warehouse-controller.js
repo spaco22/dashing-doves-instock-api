@@ -62,7 +62,6 @@ const add = async (req, res) => {
   function countDigits(string) {
     let count = 0;
     for (let i of string) {
-      // console.log(i);
       if (!isNaN(parseInt(i))) {
         count++;
       }
@@ -70,23 +69,59 @@ const add = async (req, res) => {
     return count;
   }
 
-  function areaCodeCheck(string) {
-    
-  }
+  const areaCode = /^\+/;
+  const firstSpace = /\+1\s/;
+  const brackets = /\(\d{3}\)/;
+  const hyphen = /\d{3}-\d{4}$/;
+  const secondSpace = /\(\d{3}\)\s/;
 
   const phoneNumber = req.body.contact_phone;
-  console.log("This is the phone number:", req.body.contact_phone);
-  // console.log("This is the parsed phone number:", phoneNumber);
-  console.log("This is the phone number typeof:", typeof phoneNumber);
 
   if (countDigits(phoneNumber) !== 11) {
     return res.status(400).json({
-      message: "Please provide a valid phone number (ie. +1 (234) 5678)",
+      message:
+        "Please provide a valid phone number in the following format +1 (xxx) xxx-xxxx",
       error: "Phone number must contain 11 digits",
       status: 400,
     });
+  } else if (!areaCode.test(phoneNumber)) {
+    return res.status(400).json({
+      message:
+        "Please provide a valid phone number in the following format +1 (xxx) xxx-xxxx",
+      error: "Phone number must contain +1",
+      status: 400,
+    });
+  } else if (!firstSpace.test(phoneNumber)) {
+    return res.status(400).json({
+      message:
+        "Please provide a valid phone number in the following format +1 (xxx) xxx-xxxx",
+      error:
+        "Phone number must contain a space between +1 and the phone number",
+      status: 400,
+    });
+  } else if (!brackets.test(phoneNumber)) {
+    return res.status(400).json({
+      message:
+        "Please provide a valid phone number in the following format +1 (xxx) xxx-xxxx",
+      error: "Phone number must contain the are code in brackets",
+      status: 400,
+    });
+  } else if (!hyphen.test(phoneNumber)) {
+    return res.status(400).json({
+      message:
+        "Please provide a valid phone number in the following format +1 (xxx) xxx-xxxx",
+      error:
+        "Phone number must contain a hyphen between the first three and last four digits",
+      status: 400,
+    });
+  } else if (!secondSpace.test(phoneNumber)) {
+    return res.status(400).json({
+      message:
+        "Please provide a valid phone number in the following format +1 (xxx) xxx-xxxx",
+      error: "Phone number must contain a space after the brackets",
+      status: 400,
+    });
   }
-
 
   try {
     const warehousesData = await knex("warehouses").insert(req.body);
