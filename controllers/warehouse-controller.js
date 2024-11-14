@@ -143,4 +143,27 @@ const add = async (req, res) => {
   }
 };
 
-export { index, findOne, add };
+const del = async (req, res) => {
+  try {
+    const selectedWarehouse = await knex("warehouses")
+      .where({ id: req.params.id })
+      .delete();
+
+    if (selectedWarehouse === 0) {
+      return res
+        .status(404)
+        .json({ message: `Warehouse with ID ${req.params.id} not found`,
+        status: 404 });
+    }
+    res.status(204).json({message: `Warehouse with ID ${req.params.id} successfully deleted`});
+    console.log(`Warehouse with ID ${req.params.id} succesfully deleted`);
+  } catch (error) {
+    console.error("Error deleting warehouse", error);
+    res.status(500).json({
+      message: `Error deleting warehouse`,
+      status: 500
+    });
+  }
+};
+
+export { index, findOne, add, del };
