@@ -1,4 +1,4 @@
-import initKnex from "knex"; 
+import initKnex from "knex";
 import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
 
@@ -9,7 +9,7 @@ export const getAllInventoryItems = async (req, res) => {
       .join("warehouses", "inventories.warehouse_id", "=", "warehouses.id")
       .select(
         "inventories.id",
-        "warehouses.warehouse_name",  
+        "warehouses.warehouse_name",
         "inventories.item_name",
         "inventories.description",
         "inventories.category",
@@ -36,7 +36,7 @@ export const getInventoryItemById = async (req, res) => {
       .where("inventories.id", req.params.id)
       .select(
         "inventories.id",
-        "warehouses.warehouse_name", 
+        "warehouses.warehouse_name",
         "inventories.item_name",
         "inventories.description",
         "inventories.category",
@@ -61,3 +61,72 @@ export const getInventoryItemById = async (req, res) => {
     });
   }
 };
+
+// POST/CREATE a New Inventory Item
+export const postNewInventoryItem = async (req, res) => {
+    const { warehouse_id, item_name, description, category, status, quantity } =
+      req.body;
+  
+    console.log("req.body", req.body);
+  
+    if (
+      !warehouse_id ||
+      !item_name ||
+      !description ||
+      !category ||
+      !status ||
+      quantity === undefined
+    ) {
+      return res.status(400).json({
+        message: "All fields are required.",
+      });
+    }
+  
+    if (typeof quantity !== "number") {
+      return res.status(400).json({
+        message: "Quantity must be a number.",
+      });
+    }
+  
+    try {
+      const warehouseExists = await knex("warehouses")
+        .where("id", warehouse_id)
+        .first();
+      if (!warehouseExists) {
+        return res.status(400).json({
+          message: "The provided warehouse_id does not exist.",
+        });
+      }
+  
+      const [newInventoryItem] = await knex("inventories")
+        .insert({
+          warehouse_id,
+          item_name,
+          description,
+          category,
+          status,
+          quantity,
+        })
+        .returning([
+          "id",
+          "warehouse_id",
+          "item_name",
+          "description",
+          "category",
+          "status",
+          "quantity",
+        ]);
+  
+      res.status(201).json({
+        message: "Successfully posted a new item in the inventory.",
+        item: newInventoryItem,
+      });
+    } catch (error) {
+      console.error("Error creating new inventory item:", error);
+      res.status(500).json({
+        message: "Error occurred while creating a new inventory item.",
+        error: error.message,
+      });
+    }
+  };
+  
