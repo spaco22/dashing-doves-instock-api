@@ -1,6 +1,6 @@
 import express from "express";
-import warehouseRoute from "./routes/warehouses.js";
 import inventoryRoute from "./routes/inventory.js";
+import warehouseRoute from "./routes/warehouses.js";
 import cors from "cors";
 
 
@@ -19,3 +19,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`app running on port ${PORT}`));
+
+
