@@ -7,3 +7,5 @@ inventoryRoute.get("/", (req, res) => {
 });
 
 export default inventoryRoute;
+
+

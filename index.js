@@ -20,4 +20,6 @@ app.get("/", (req, res) => {
   res.send("<h1>Welcome to the InStock Backend! 🕊️ </h1>");
 });
 
-app.listen(PORT, () => console.log(`app running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
+});
