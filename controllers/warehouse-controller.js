@@ -36,18 +36,64 @@ const findOne = async (req, res) => {
 };
 
 const add = async (req, res) => {
-
-  if (!req.body.warehouse_name || !req.body.address || !req.body.city || !req.body.country  || !req.body.contact_name || !req.body.contact_position || !req.body.contact_phone || !req.body.contact_email ) {
+  if (
+    !req.body.warehouse_name ||
+    !req.body.address ||
+    !req.body.city ||
+    !req.body.country ||
+    !req.body.contact_name ||
+    !req.body.contact_position ||
+    !req.body.contact_phone ||
+    !req.body.contact_email
+  ) {
     return res.status(400).json({
-      message: "Please provide warehouse name, address, city, country, as well as contact name, position, phone number and email for create warehouse request",
-      status: 400
+      message:
+        "Please provide warehouse name, address, city, country, as well as contact name, position, phone number and email for create warehouse request",
+      status: 400,
+    });
+  } else if (!req.body.contact_email.includes("@")) {
+    return res.status(400).json({
+      message: "Please provide a valid email address (ie. example@email.com)",
+      error: "missing '@'",
+      status: 400,
     });
   }
+
+  function countDigits(string) {
+    let count = 0;
+    for (let i of string) {
+      // console.log(i);
+      if (!isNaN(parseInt(i))) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  function areaCodeCheck(string) {
+    
+  }
+
+  const phoneNumber = req.body.contact_phone;
+  console.log("This is the phone number:", req.body.contact_phone);
+  // console.log("This is the parsed phone number:", phoneNumber);
+  console.log("This is the phone number typeof:", typeof phoneNumber);
+
+  if (countDigits(phoneNumber) !== 11) {
+    return res.status(400).json({
+      message: "Please provide a valid phone number (ie. +1 (234) 5678)",
+      error: "Phone number must contain 11 digits",
+      status: 400,
+    });
+  }
+
 
   try {
     const warehousesData = await knex("warehouses").insert(req.body);
     const newWarehouseId = warehousesData[0];
-    const newWarehouse = await knex("warehouses").where({ id: newWarehouseId }).first();
+    const newWarehouse = await knex("warehouses")
+      .where({ id: newWarehouseId })
+      .first();
 
     res.status(201).json({
       message: "Warehouse succesfully created",
