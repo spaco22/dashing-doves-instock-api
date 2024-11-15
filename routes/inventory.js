@@ -1,5 +1,6 @@
 import express from "express";
-import { getAllInventoryItems, getInventoryItemById, deleteInventoryById } from "../controllers/inventory-controller.js";
+import { getAllInventoryItems, getInventoryItemById, deleteInventoryById,postNewInventoryItem } from "../controllers/inventory-controller.js";
+
 
 const inventoryRoute = express.Router();
 
@@ -10,6 +11,8 @@ inventoryRoute.get("/", getAllInventoryItems);
 inventoryRoute.get("/:id", getInventoryItemById);
 
 inventoryRoute.delete('/:id', deleteInventoryById);
+// // POST /inventories - Create a new inventory item
+inventoryRoute.post("/", postNewInventoryItem);
 
 export default inventoryRoute;
 
