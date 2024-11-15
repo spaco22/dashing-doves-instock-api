@@ -216,5 +216,33 @@ export const deleteInventoryById = async (req, res) => {
     });
   }
  };
+
+export const getInventoriesByWarehouseId = async (req, res) => {
+    const { id } = req.params; 
+
+    try {
+      
+      const warehouseExists = await knex("warehouses").where("id", id).first();
+  
+      if (!warehouseExists) {
+        return res.status(404).json({
+          message: `Warehouse with ID ${id} not found.`,
+        });
+      }
+  
+      const inventories = await knex("inventories")
+        .where("warehouse_id", id)
+        .select("id", "item_name", "category", "status", "quantity");
+  
+      res.status(200).json(inventories);
+    } catch (error) {
+      console.error("Error fetching inventories by warehouse ID:", error);
+      res.status(500).json({
+        message: "Error occurred while fetching inventories.",
+        error: error.message,
+      });
+    }
+  };
+  
  
 
