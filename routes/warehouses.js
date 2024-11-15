@@ -5,6 +5,10 @@ const router = express.Router();
 
 router.route("/").get(warehouseController.index).post(warehouseController.add);
 
-router.route("/:id").get(warehouseController.findOne).delete(warehouseController.del);
+router
+  .route("/:id")
+  .get(warehouseController.findOne)
+  .put(warehouseController.edit)
+  .delete(warehouseController.del);
 
 export default router;
