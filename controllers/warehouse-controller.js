@@ -27,7 +27,10 @@ const findOne = async (req, res) => {
     const warehouseData = warehousesFound[0];
     res.status(200).json(warehouseData);
   } catch (error) {
-    console.error(`Error retrieving data for warehouse with ID ${req.params.id}`, error);
+    console.error(
+      `Error retrieving data for warehouse with ID ${req.params.id}`,
+      error
+    );
     res.status(500).json({
       message: `Error retrieving data for warehouse with ID ${req.params.id}`,
       status: 500,
@@ -35,17 +38,13 @@ const findOne = async (req, res) => {
   }
 };
 
-const edit = async(req, res) => {
-  // res.send("This is an EDIT req!");
-
- 
-
+const edit = async (req, res) => {
   try {
-    const warehouseDataById = await knex("warehouses").where({
-      id: req.params.id,
-    }).update(req.body);
-
-    
+    const warehouseDataById = await knex("warehouses")
+      .where({
+        id: req.params.id,
+      })
+      .update(req.body);
 
     if (warehouseDataById === 0) {
       return res.status(404).json({
@@ -53,8 +52,6 @@ const edit = async(req, res) => {
         status: 404,
       });
     }
-    // const warehouseData = warehousesFound[0];
-    // res.status(200).json(warehouseData);
 
     if (
       !req.body.warehouse_name ||
@@ -78,7 +75,7 @@ const edit = async(req, res) => {
         status: 400,
       });
     }
-  
+
     function countDigits(string) {
       let count = 0;
       for (let i of string) {
@@ -88,15 +85,15 @@ const edit = async(req, res) => {
       }
       return count;
     }
-  
+
     const areaCode = /^\+/;
     const firstSpace = /\+1\s/;
     const brackets = /\(\d{3}\)/;
     const hyphen = /\d{3}-\d{4}$/;
     const secondSpace = /\(\d{3}\)\s/;
-  
+
     const phoneNumber = req.body.contact_phone;
-  
+
     if (countDigits(phoneNumber) !== 11) {
       return res.status(400).json({
         message:
@@ -143,23 +140,22 @@ const edit = async(req, res) => {
       });
     }
 
-    const updatedWarehouse = await knex("warehouses")
-    .where({
+    const updatedWarehouse = await knex("warehouses").where({
       id: req.params.id,
     });
-  
-  res.json(updatedWarehouse[0]);
 
-  } catch(error) {
-    console.error(`Error retrieving data for warehouse with ID ${req.params.id}`, error);
+    res.json(updatedWarehouse[0]);
+  } catch (error) {
+    console.error(
+      `Error retrieving data for warehouse with ID ${req.params.id}`,
+      error
+    );
     res.status(500).json({
       message: `Error retrieving data for warehouse with ID ${req.params.id}`,
       status: 500,
     });
-    
   }
-
-}
+};
 
 const add = async (req, res) => {
   if (
@@ -278,16 +274,22 @@ const del = async (req, res) => {
     if (selectedWarehouse === 0) {
       return res
         .status(404)
-        .json({ message: `Warehouse with ID ${req.params.id} not found`,
-        status: 404 });
+        .json({
+          message: `Warehouse with ID ${req.params.id} not found`,
+          status: 404,
+        });
     }
-    res.status(204).json({message: `Warehouse with ID ${req.params.id} successfully deleted`});
+    res
+      .status(204)
+      .json({
+        message: `Warehouse with ID ${req.params.id} successfully deleted`,
+      });
     console.log(`Warehouse with ID ${req.params.id} succesfully deleted`);
   } catch (error) {
     console.error("Error deleting warehouse", error);
     res.status(500).json({
       message: `Error deleting warehouse`,
-      status: 500
+      status: 500,
     });
   }
 };
