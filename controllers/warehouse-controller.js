@@ -35,6 +35,10 @@ const findOne = async (req, res) => {
   }
 };
 
+const edit = async(req, res) => {
+  res.send("This is an EDIT req!");
+}
+
 const add = async (req, res) => {
   if (
     !req.body.warehouse_name ||
@@ -166,4 +170,4 @@ const del = async (req, res) => {
   }
 };
 
-export { index, findOne, add, del };
+export { index, findOne, add, edit, del };
