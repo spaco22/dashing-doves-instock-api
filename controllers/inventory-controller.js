@@ -167,7 +167,7 @@ export const editInventoryItem = async (req, res) => {
     if (!inventoryItem) {
       return res.status(404).json({ message: "Inventory item not found" });
     }
-
+    
     await knex("inventories").where("id", req.params.id).update({
       warehouse_id,
       item_name,
@@ -193,3 +193,28 @@ export const editInventoryItem = async (req, res) => {
     });
   }
 };
+    
+export const deleteInventoryById = async (req, res) => {
+  try {
+    const inventoryDeleted = await knex("inventories")
+    .where({id: req.params.id})
+    .delete();
+
+    if (inventoryDeleted ===0) {
+      return res
+        .status(404)
+        .json({ message: `Inventory with ID ${req.params.id} not found`,
+          status: 404 });
+    }
+    
+    res.status(204).json({message: `Inventory with ID ${req.params.id} successfully deleted`});
+    console.log(`Inventory with ID ${req.params.id} succesfully deleted`);
+  } catch (error) {
+    console.error("Error inventory warehouse", error);
+    res.status(500).json({
+      message: `Unable to delete inventory: ${error}`,
+    });
+  }
+ };
+ 
+
