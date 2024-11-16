@@ -36,6 +36,7 @@ export const getInventoryItemById = async (req, res) => {
       .where("inventories.id", req.params.id)
       .select(
         "inventories.id",
+        "inventories.warehouse_id",
         "warehouses.warehouse_name",
         "inventories.item_name",
         "inventories.description",
@@ -75,14 +76,14 @@ export const postNewInventoryItem = async (req, res) => {
     !description ||
     !category ||
     !status ||
-    quantity === undefined
+    (isNaN(quantity) && quantity >= 0 )
   ) {
     return res.status(400).json({
       message: "All fields are required.",
     });
   }
 
-  if (typeof quantity !== "number") {
+  if (typeof quantity !== "number" ) {
     return res.status(400).json({
       message: "Quantity must be a number.",
     });
@@ -142,7 +143,7 @@ export const editInventoryItem = async (req, res) => {
     !description ||
     !category ||
     !status ||
-    quantity === undefined
+    isNaN(quantity)
   ) {
     return res.status(400).json({ message: "All fields are required." });
   }
