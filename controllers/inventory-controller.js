@@ -68,22 +68,20 @@ export const postNewInventoryItem = async (req, res) => {
   const { warehouse_id, item_name, description, category, status, quantity } =
     req.body;
 
-  console.log("req.body", req.body);
-
   if (
     !warehouse_id ||
     !item_name ||
     !description ||
     !category ||
     !status ||
-    (isNaN(quantity) && quantity >= 0 )
+    (isNaN(quantity) && quantity >= 0)
   ) {
     return res.status(400).json({
       message: "All fields are required.",
     });
   }
 
-  if (typeof quantity !== "number" ) {
+  if (typeof quantity !== "number") {
     return res.status(400).json({
       message: "Quantity must be a number.",
     });
@@ -168,7 +166,7 @@ export const editInventoryItem = async (req, res) => {
     if (!inventoryItem) {
       return res.status(404).json({ message: "Inventory item not found" });
     }
-    
+
     await knex("inventories").where("id", req.params.id).update({
       warehouse_id,
       item_name,
@@ -194,56 +192,57 @@ export const editInventoryItem = async (req, res) => {
     });
   }
 };
-    
+
 export const deleteInventoryById = async (req, res) => {
   try {
     const inventoryDeleted = await knex("inventories")
-    .where({id: req.params.id})
-    .delete();
+      .where({ id: req.params.id })
+      .delete();
 
-    if (inventoryDeleted ===0) {
+    if (inventoryDeleted === 0) {
       return res
         .status(404)
-        .json({ message: `Inventory with ID ${req.params.id} not found`,
-          status: 404 });
+        .json({
+          message: `Inventory with ID ${req.params.id} not found`,
+          status: 404,
+        });
     }
-    
-    res.status(204).json({message: `Inventory with ID ${req.params.id} successfully deleted`});
-    console.log(`Inventory with ID ${req.params.id} succesfully deleted`);
+
+    res
+      .status(204)
+      .json({
+        message: `Inventory with ID ${req.params.id} successfully deleted`,
+      });
   } catch (error) {
     console.error("Error inventory warehouse", error);
     res.status(500).json({
       message: `Unable to delete inventory: ${error}`,
     });
   }
- };
+};
 
 export const getInventoriesByWarehouseId = async (req, res) => {
-    const { id } = req.params; 
+  const { id } = req.params;
 
-    try {
-      
-      const warehouseExists = await knex("warehouses").where("id", id).first();
-  
-      if (!warehouseExists) {
-        return res.status(404).json({
-          message: `Warehouse with ID ${id} not found.`,
-        });
-      }
-  
-      const inventories = await knex("inventories")
-        .where("warehouse_id", id)
-        .select("id", "item_name", "category", "status", "quantity");
-  
-      res.status(200).json(inventories);
-    } catch (error) {
-      console.error("Error fetching inventories by warehouse ID:", error);
-      res.status(500).json({
-        message: "Error occurred while fetching inventories.",
-        error: error.message,
+  try {
+    const warehouseExists = await knex("warehouses").where("id", id).first();
+
+    if (!warehouseExists) {
+      return res.status(404).json({
+        message: `Warehouse with ID ${id} not found.`,
       });
     }
-  };
-  
- 
 
+    const inventories = await knex("inventories")
+      .where("warehouse_id", id)
+      .select("id", "item_name", "category", "status", "quantity");
+
+    res.status(200).json(inventories);
+  } catch (error) {
+    console.error("Error fetching inventories by warehouse ID:", error);
+    res.status(500).json({
+      message: "Error occurred while fetching inventories.",
+      error: error.message,
+    });
+  }
+};
