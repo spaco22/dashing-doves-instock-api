@@ -1,6 +1,7 @@
 import initKnex from "knex";
 import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
+import inventoryValidator from "../validators/inventoryValidator.js";
 
 // Get all inventory items with warehouse name
 export const getAllInventoryItems = async (req, res) => {
@@ -65,27 +66,17 @@ export const getInventoryItemById = async (req, res) => {
 
 // POST/CREATE a New Inventory Item
 export const postNewInventoryItem = async (req, res) => {
+  const validation = inventoryValidator(req.body);
+
+  if (!validation.valid) {
+    return res.status(400).json({
+      message: validation.message,
+      status: 400,
+    });
+  }
+
   const { warehouse_id, item_name, description, category, status, quantity } =
     req.body;
-
-  if (
-    !warehouse_id ||
-    !item_name ||
-    !description ||
-    !category ||
-    !status ||
-    (isNaN(quantity) && quantity >= 0)
-  ) {
-    return res.status(400).json({
-      message: "All fields are required.",
-    });
-  }
-
-  if (typeof quantity !== "number") {
-    return res.status(400).json({
-      message: "Quantity must be a number.",
-    });
-  }
 
   try {
     const warehouseExists = await knex("warehouses")
@@ -132,23 +123,17 @@ export const postNewInventoryItem = async (req, res) => {
 //PUT/EDIT and Inventory Item
 
 export const editInventoryItem = async (req, res) => {
+  const validation = inventoryValidator(req.body);
+
+  if (!validation.valid) {
+    return res.status(400).json({
+      message: validation.message,
+      status: 400,
+    });
+  }
+
   const { warehouse_id, item_name, description, category, status, quantity } =
     req.body;
-
-  if (
-    !warehouse_id ||
-    !item_name ||
-    !description ||
-    !category ||
-    !status ||
-    isNaN(quantity)
-  ) {
-    return res.status(400).json({ message: "All fields are required." });
-  }
-
-  if (typeof quantity !== "number") {
-    return res.status(400).json({ message: "Quantity must be a number." });
-  }
 
   try {
     const warehouseExists = await knex("warehouses")
